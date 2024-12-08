@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:camera_image_selector/camera_image_selector.dart';
 
 void main() {
   runApp(const MyApp());
@@ -105,6 +106,10 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            CustomButton(
+                onPressed: _incrementCounter,
+                child: const Text("Click me")
+            ),
             const Text(
               'You have pushed the button this many times:',
             ),

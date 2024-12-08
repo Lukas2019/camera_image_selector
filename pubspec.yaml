@@ -1,7 +1,7 @@
 name: camera_image_selector
 description: "A new Flutter package project."
 version: 0.0.1
-homepage:
+homepage: https://github.com/Lukas2019/camera_image_selector
 
 environment:
   sdk: ^3.5.4
