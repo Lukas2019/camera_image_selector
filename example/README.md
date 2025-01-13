@@ -1,6 +1,6 @@
-# example
+# camera_image_selector_example
 
-A new Flutter project.
+Demonstrates how to use the camera_image_selector plugin.
 
 ## Getting Started
 
