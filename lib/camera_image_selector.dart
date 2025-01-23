@@ -11,7 +11,7 @@ class CameraImageSelector extends StatefulWidget {
 }
 
 class _CameraImageSelectorState extends State<CameraImageSelector> {
-  final List<XFile> _selectedImages = [];
+  final List<File> _selectedImages = [];
   final ImagePicker _picker = ImagePicker();
   late CameraController controller;
   late List<CameraDescription> _cameras;
@@ -21,9 +21,12 @@ class _CameraImageSelectorState extends State<CameraImageSelector> {
   Future<void> _pickImages() async {
     final List<XFile>? images = await _picker.pickMultiImage();
     if (images != null) {
-      setState(() {
-        _selectedImages.addAll(images);
-      });
+      XFile image;
+      for ( image  in images) {
+        setState(() {
+          _selectedImages.add(File(image.path));
+        });
+      }
     }
   }
 
@@ -79,10 +82,7 @@ class _CameraImageSelectorState extends State<CameraImageSelector> {
                       height: 200,
                       child: Stack(
                         children: [
-                          if (snapshot.hasData) Image(
-                              image:
-                                snapshot.data,
-                                  ),
+                          if (snapshot.hasData) Image.memory(_selectedImages[_selectedIndex]),
                           Positioned(
                             child: IconButton(
                                 icon: Icon(Icons.edit),
@@ -106,7 +106,7 @@ class _CameraImageSelectorState extends State<CameraImageSelector> {
                                   if (editedImage != null) {
                                     setState(() {
                                       _selectedImages[_selectedIndex] =
-                                          XFile.fromData(editedImage);
+                                          editedImage;
                                     });
                                   }
                                 }),
@@ -132,7 +132,7 @@ class _CameraImageSelectorState extends State<CameraImageSelector> {
                                 if (oldIndex < newIndex) {
                                   newIndex -= 1;
                                 }
-                                final XFile item =
+                                final File item =
                                     _selectedImages.removeAt(oldIndex);
                                 _selectedImages.insert(newIndex, item);
                               });
@@ -193,10 +193,14 @@ class _CameraImageSelectorState extends State<CameraImageSelector> {
     if (_selectedImages.isEmpty) {
       return null;
     }
-    if (_selectedImages[_selectedIndex].path != "") {
-      return FileImage(File(_selectedImages[_selectedIndex].path));
+    if (_selectedImages[_selectedIndex].path != '') {
+      return Image(
+        image:
+        FileImage(File(_selectedImages[_selectedIndex].path)),
+      );
     }
-
-    return FileImage( _selectedImages[_selectedIndex].readAsBytes());
+    final image = await _selectedImages[_selectedIndex].readAsBytes();
+    return Image.memory(image);
+    //return FileImage( _selectedImages[index].readAsBytes());
   }
 }
