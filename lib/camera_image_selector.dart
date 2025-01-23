@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -70,100 +69,90 @@ class _CameraImageSelectorState extends State<CameraImageSelector> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          if (_selectedImages.isNotEmpty)
-            SizedBox(
-              height: 200,
-              child: Stack(
+      body: FutureBuilder(
+          future: _imagesLoading(),
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+              return Column(
                 children: [
-                  Image(
-                      image: FileImage(
-                          File(_selectedImages[_selectedIndex].path))),
-                  Positioned(
-                    child: IconButton(
-                      icon: Icon(Icons.edit),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.white.withOpacity(0.5)),
-                      ),
-                      onPressed: () async {
-                        final image = await File(_selectedImages[_selectedIndex].path).readAsBytes();
-                        final editedImage = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ImageEditor(
-                              image: image, // <-- Uint8List of image
-                            ),
-                          ),
-                        );
+                  if (_selectedImages.isNotEmpty)
+                    SizedBox(
+                      height: 200,
+                      child: Stack(
+                        children: [
+                          if (snapshot.hasData) Image(
+                              image:
+                                snapshot.data,
+                                  ),
+                          Positioned(
+                            child: IconButton(
+                                icon: Icon(Icons.edit),
+                                style: ButtonStyle(
+                                  backgroundColor: WidgetStatePropertyAll(
+                                      Colors.white.withOpacity(0.5)),
+                                ),
+                                onPressed: () async {
+                                  final image = await File(
+                                          _selectedImages[_selectedIndex].path)
+                                      .readAsBytes();
+                                  final editedImage = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ImageEditor(
+                                        image: image, // <-- Uint8List of image
+                                      ),
+                                    ),
+                                  );
 
-                        if (editedImage != null) {
-                          setState(() {
-                            _selectedImages[_selectedIndex] = XFile.fromData(editedImage);
-                          });
-                        }
-                      },
+                                  if (editedImage != null) {
+                                    setState(() {
+                                      _selectedImages[_selectedIndex] =
+                                          XFile.fromData(editedImage);
+                                    });
+                                  }
+                                }),
+                          )
+                        ],
+                      ),
                     ),
-                  )
-                ],
-              ),
-            ),
-          if (_selectedImages.isEmpty)
-            SizedBox(height: 200, child: Placeholder()),
-          Container(
-            height: 100,
-            child: Row(
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - 50,
-                  child: ReorderableListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    scrollController: _scrollController,
-                    itemBuilder: buildItem,
-                    itemCount: _selectedImages.length,
-                    onReorder: (int oldIndex, int newIndex) {
-                      setState(() {
-                        if (oldIndex < newIndex) {
-                          newIndex -= 1;
-                        }
-                        final XFile item = _selectedImages.removeAt(oldIndex);
-                        _selectedImages.insert(newIndex, item);
-                      });
-                    },
+                  if (_selectedImages.isEmpty)
+                    SizedBox(height: 200, child: Placeholder()),
+                  Container(
+                    height: 100,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width - 50,
+                          child: ReorderableListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            scrollController: _scrollController,
+                            itemBuilder: buildItem,
+                            itemCount: _selectedImages.length,
+                            onReorder: (int oldIndex, int newIndex) {
+                              setState(() {
+                                if (oldIndex < newIndex) {
+                                  newIndex -= 1;
+                                }
+                                final XFile item =
+                                    _selectedImages.removeAt(oldIndex);
+                                _selectedImages.insert(newIndex, item);
+                              });
+                            },
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.add_a_photo),
+                          onPressed: _pickImages,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.add_a_photo),
-                  onPressed: _pickImages,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+                ],
+              );
+          }),
     );
   }
 
   Widget buildItem(context, index) {
-    return FutureBuilder<Uint8List>(
-      key: Key('$index'),
-      future: _selectedImages[index].readAsBytes(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        }
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-        if (snapshot.hasData) {
-          return _buildImage(context, index, snapshot.data!);
-        }
-        return Container();
-      },
-    );
-  }
-
-  Widget _buildImage(BuildContext context, int index, Uint8List data) {
     return Stack(key: Key('$index'), children: [
       GestureDetector(
         onTap: () {
@@ -179,7 +168,7 @@ class _CameraImageSelectorState extends State<CameraImageSelector> {
           margin: const EdgeInsets.all(8.0),
           height: 100,
           width: 100,
-          child: Center(child: Image.memory(data)),
+          child: Center(child: Image.file(File(_selectedImages[index].path))),
         ),
       ),
       Positioned(
@@ -198,5 +187,16 @@ class _CameraImageSelectorState extends State<CameraImageSelector> {
         right: 0,
       ),
     ]);
+  }
+
+  Future<dynamic> _imagesLoading() async {
+    if (_selectedImages.isEmpty) {
+      return null;
+    }
+    if (_selectedImages[_selectedIndex].path != "") {
+      return FileImage(File(_selectedImages[_selectedIndex].path));
+    }
+
+    return FileImage( _selectedImages[_selectedIndex].readAsBytes());
   }
 }
