@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ class CameraImageSelector extends StatefulWidget {
 }
 
 class _CameraImageSelectorState extends State<CameraImageSelector> {
-  final List<File> _selectedImages = [];
+  final List<Uint8List> _selectedImages = [];
   final ImagePicker _picker = ImagePicker();
   late CameraController controller;
   late List<CameraDescription> _cameras;
@@ -23,11 +24,17 @@ class _CameraImageSelectorState extends State<CameraImageSelector> {
     if (images != null) {
       XFile image;
       for ( image  in images) {
+        Uint8List imageAsBytes = await convertImagePathToBytes(image.path);
         setState(() {
-          _selectedImages.add(File(image.path));
+          _selectedImages.add( imageAsBytes);
         });
       }
     }
+  }
+
+  Future<Uint8List> convertImagePathToBytes(String imagePath) async {
+    final File imageFile = File(imagePath);
+    return await imageFile.readAsBytes();
   }
 
   @override
@@ -72,17 +79,14 @@ class _CameraImageSelectorState extends State<CameraImageSelector> {
           ),
         ],
       ),
-      body: FutureBuilder(
-          future: _imagesLoading(),
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-              return Column(
+      body: Column(
                 children: [
                   if (_selectedImages.isNotEmpty)
                     SizedBox(
                       height: 200,
                       child: Stack(
                         children: [
-                          if (snapshot.hasData) Image.memory(_selectedImages[_selectedIndex]),
+                          Image.memory(_selectedImages[_selectedIndex]),
                           Positioned(
                             child: IconButton(
                                 icon: Icon(Icons.edit),
@@ -91,9 +95,7 @@ class _CameraImageSelectorState extends State<CameraImageSelector> {
                                       Colors.white.withOpacity(0.5)),
                                 ),
                                 onPressed: () async {
-                                  final image = await File(
-                                          _selectedImages[_selectedIndex].path)
-                                      .readAsBytes();
+                                  final image = await _selectedImages[_selectedIndex];
                                   final editedImage = await Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -132,7 +134,7 @@ class _CameraImageSelectorState extends State<CameraImageSelector> {
                                 if (oldIndex < newIndex) {
                                   newIndex -= 1;
                                 }
-                                final File item =
+                                final Uint8List item =
                                     _selectedImages.removeAt(oldIndex);
                                 _selectedImages.insert(newIndex, item);
                               });
@@ -147,8 +149,7 @@ class _CameraImageSelectorState extends State<CameraImageSelector> {
                     ),
                   ),
                 ],
-              );
-          }),
+      ),
     );
   }
 
@@ -168,7 +169,7 @@ class _CameraImageSelectorState extends State<CameraImageSelector> {
           margin: const EdgeInsets.all(8.0),
           height: 100,
           width: 100,
-          child: Center(child: Image.file(File(_selectedImages[index].path))),
+          child: Center(child: Image.memory(_selectedImages[index])),
         ),
       ),
       Positioned(
@@ -187,20 +188,5 @@ class _CameraImageSelectorState extends State<CameraImageSelector> {
         right: 0,
       ),
     ]);
-  }
-
-  Future<dynamic> _imagesLoading() async {
-    if (_selectedImages.isEmpty) {
-      return null;
-    }
-    if (_selectedImages[_selectedIndex].path != '') {
-      return Image(
-        image:
-        FileImage(File(_selectedImages[_selectedIndex].path)),
-      );
-    }
-    final image = await _selectedImages[_selectedIndex].readAsBytes();
-    return Image.memory(image);
-    //return FileImage( _selectedImages[index].readAsBytes());
   }
 }

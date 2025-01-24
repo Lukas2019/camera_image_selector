@@ -34,4 +34,4 @@ Or in text format add the key:
 
 ### Android
 
-No configuration required - the plugin should work out of the box.
+You must update minSdkVersion to 21 (or higher) in your `android/app/build.gradle` file.
