@@ -1,3 +1,4 @@
+import 'package:camera_image_selector/image_controller.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -17,12 +18,14 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
-  final _cameraImageSelectorPlugin = CameraImageSelector();
+  final ImageController _imageController = ImageController();
+  //late final CameraImageSelector _cameraImageSelectorPlugin;
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
+    //_cameraImageSelectorPlugin = CameraImageSelector(imageController: _imageController);
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -49,7 +52,16 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: CameraImageSelector(),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("Bilder selector"),
+          actions: [
+            IconButton(onPressed: (){
+              _imageController.clearImages();
+            }, icon: Icon(Icons.remove_circle)),
+          ],
+        ),
+          body: CameraImageSelector(imageController: _imageController,)),
     );
   }
 }
