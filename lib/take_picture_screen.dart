@@ -120,8 +120,13 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       // You must wait until the controller is initialized before displaying the
       // camera preview. Use a FutureBuilder to display a loading spinner until the
       // controller has finished initializing.
-      body: Column(
+      body: Stack(
         children: [
+          SizedBox(
+            height: double.infinity,
+            width: double.infinity,
+            child: Placeholder(strokeWidth: 0,
+            color: Colors.black,),),
 FutureBuilder<void>(
   future: _initializeControllerFuture,
   builder: (context, snapshot) {
@@ -137,70 +142,93 @@ FutureBuilder<void>(
     }
   },
 ),
-          Expanded(
-            child: Column(
-              children: [
-                SizedBox(
-                    height: 100,
-                    child: ListenableBuilder(
-                      listenable: widget.imageController,
-                      builder: (context, child) {
-                        return ImageSortList(selectedImages: widget.imageController.selectedImages);
-                      },
-                    ),
-                ),
-                Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      IconButton(
-                          onPressed: () async {
-                            final List<XFile>? images =
-                                await _picker.pickMultiImage();
-                            if (images != null) {
-                              XFile image;
-                              for (image in images) {
-                                final imageBytes =
-                                    await convertImagePathToBytes(image.path);
-                                setState(() {
-                                  widget.imageController.addImage(imageBytes);
-                                });
-                              }
-                            }
-                          },
-                          icon: Icon(
-                            Icons.image,
-                            color: Colors.white,
-                            size: 60,
-                          )),
-                      IconButton(
-                          onPressed: _captureImage,
-                          icon: Icon(
-                            Icons.camera,
-                            color: Colors.white,
-                            size: 60,
-                          )),
-                      IconButton(
-                          onPressed: () {
-                            _controller.dispose();
-                            if (_cameras.length > _selectedCamera + 1) {
-                              _selectedCamera++;
-                            } else {
-                              _selectedCamera = 0;
-                            }
-                            _controller = CameraController(_cameras[ _selectedCamera], ResolutionPreset.max);
-                            _initializeControllerFuture = _controller.initialize();
-                            setState(() {});
-                          },
-                          icon: Icon(
-                            Icons.cameraswitch,
-                            color: Colors.white,
-                            size: 60,
-                          )),
-                    ],
+          Positioned(
+            bottom: 0,
+            left: 0,
+            child: Expanded(
+              child: Column(
+                children: [
+                  SizedBox(
+                      height: 100,
+                      child: ListenableBuilder(
+                        listenable: widget.imageController,
+                        builder: (context, child) {
+                          return ImageSortList(selectedImages: widget.imageController);
+                        },
+                      ),
                   ),
-                ),
-              ],
+                  Container(
+                    color: Colors.white12,
+                    width: MediaQuery.of(context).size.width,
+                    height: 80,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                            onPressed: () async {
+                              final List<XFile>? images =
+                                  await _picker.pickMultiImage();
+                              if (images != null) {
+                                XFile image;
+                                for (image in images) {
+                                  final imageBytes =
+                                      await convertImagePathToBytes(image.path);
+                                  setState(() {
+                                    widget.imageController.addImage(imageBytes);
+                                  });
+                                }
+                              }
+                            },
+                            icon: Row(
+                              children: [
+                                Icon(
+                                  Icons.image,
+                                  color: Colors.white,
+                                  size: 32,
+                                ),
+                                Text(
+                                  'Bilder',
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              ],
+                            )),
+                        Container(
+                          height: 60,
+                          width: 60,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                              onPressed: _captureImage,
+                              icon: Icon(
+                                Icons.camera,
+                                color: Colors.black,
+                                size: 40,
+                              )),
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              _controller.dispose();
+                              if (_cameras.length > _selectedCamera + 1) {
+                                _selectedCamera++;
+                              } else {
+                                _selectedCamera = 0;
+                              }
+                              _controller = CameraController(_cameras[ _selectedCamera], ResolutionPreset.max);
+                              _initializeControllerFuture = _controller.initialize();
+                              setState(() {});
+                            },
+                            icon: Icon(
+                              Icons.cameraswitch,
+                              color: Colors.white,
+                              size: 32,
+                            )),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           )
         ],

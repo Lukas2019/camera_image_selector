@@ -1,5 +1,5 @@
 name: camera_image_selector
-description: "A new Flutter plugin project."
+description: "Plugin to select Images from Camera and Gallery"
 version: 0.0.1
 homepage:
 
@@ -47,6 +47,7 @@ flutter:
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
+  #  - packages/camera_image_selector/assets/NoImage.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   #

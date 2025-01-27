@@ -1,8 +1,10 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
+import 'image_controller.dart';
+
 class ImageSortList extends StatefulWidget {
-  final List<Uint8List> selectedImages;
+  final ImageController selectedImages;
   final ValueChanged<int>? onImageSelected;
 
   ImageSortList({Key? key, required this.selectedImages, this.onImageSelected}) : super(key: key);
@@ -23,14 +25,14 @@ class _ImageSortListState extends State<ImageSortList> {
         scrollDirection: Axis.horizontal,
         scrollController: _scrollController,
         itemBuilder: buildItem,
-        itemCount: widget.selectedImages.length,
+        itemCount: widget.selectedImages.selectedImages.length,
         onReorder: (int oldIndex, int newIndex) {
           setState(() {
             if (oldIndex < newIndex) {
               newIndex -= 1;
             }
-            final Uint8List item = widget.selectedImages.removeAt(oldIndex);
-            widget.selectedImages.insert(newIndex, item);
+            final Uint8List item = widget.selectedImages.selectedImages.removeAt(oldIndex);
+            widget.selectedImages.selectedImages.insert(newIndex, item);
           });
         },
       ),
@@ -66,7 +68,7 @@ class _ImageSortListState extends State<ImageSortList> {
               ),
             ),
             margin: const EdgeInsets.all(4.0),
-            child: Image.memory(widget.selectedImages[index],),
+            child: Image.memory(widget.selectedImages.selectedImages[index],),
             ),
         ),
         Positioned(
@@ -80,6 +82,7 @@ class _ImageSortListState extends State<ImageSortList> {
                   _selectedIndex -= 1;
                 }
                 widget.selectedImages.removeAt(index);
+
               });
             },
           ),

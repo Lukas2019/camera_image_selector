@@ -16,6 +16,11 @@ class ImageController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeAt(int index) {
+    _selectedImages.removeAt(index);
+    notifyListeners();
+  }
+
   void clearImages() {
     _selectedImages.clear();
     notifyListeners();
