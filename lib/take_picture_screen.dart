@@ -164,66 +164,75 @@ FutureBuilder<void>(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        IconButton(
-                            onPressed: () async {
-                              final List<XFile>? images =
-                                  await _picker.pickMultiImage();
-                              if (images != null) {
-                                XFile image;
-                                for (image in images) {
-                                  final imageBytes =
-                                      await convertImagePathToBytes(image.path);
-                                  setState(() {
-                                    widget.imageController.addImage(imageBytes);
-                                  });
-                                }
-                              }
-                            },
-                            icon: Row(
-                              children: [
-                                Icon(
-                                  Icons.image,
-                                  color: Colors.white,
-                                  size: 32,
-                                ),
-                                Text(
-                                  'Bilder',
-                                  style: TextStyle(color: Colors.white),
-                                )
-                              ],
-                            )),
-                        Container(
-                          height: 60,
-                          width: 60,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
+                        SizedBox(
+                          width: 100,
                           child: IconButton(
-                              onPressed: _captureImage,
-                              icon: Icon(
-                                Icons.camera,
-                                color: Colors.black,
-                                size: 40,
+                              onPressed: () async {
+                                final List<XFile>? images =
+                                    await _picker.pickMultiImage();
+                                if (images != null) {
+                                  XFile image;
+                                  for (image in images) {
+                                    final imageBytes =
+                                        await convertImagePathToBytes(image.path);
+                                    setState(() {
+                                      widget.imageController.addImage(imageBytes);
+                                    });
+                                  }
+                                }
+                              },
+                              icon: Row(
+                                children: [
+                                  Icon(
+                                    Icons.image,
+                                    color: Colors.white,
+                                    size: 32,
+                                  ),
+                                  Text(
+                                    'Bilder',
+                                    style: TextStyle(color: Colors.white),
+                                  )
+                                ],
                               )),
                         ),
-                        IconButton(
-                            onPressed: () {
-                              _controller.dispose();
-                              if (_cameras.length > _selectedCamera + 1) {
-                                _selectedCamera++;
-                              } else {
-                                _selectedCamera = 0;
-                              }
-                              _controller = CameraController(_cameras[ _selectedCamera], ResolutionPreset.max);
-                              _initializeControllerFuture = _controller.initialize();
-                              setState(() {});
-                            },
-                            icon: Icon(
-                              Icons.cameraswitch,
+                        SizedBox(
+                          width: 100,
+                          child: Container(
+                            height: 60,
+                            width: 60,
+                            decoration: BoxDecoration(
                               color: Colors.white,
-                              size: 32,
-                            )),
+                              shape: BoxShape.circle,
+                            ),
+                            child: IconButton(
+                                onPressed: _captureImage,
+                                icon: Icon(
+                                  Icons.camera,
+                                  color: Colors.black,
+                                  size: 40,
+                                )),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 100,
+                          child: IconButton(
+                              onPressed: () {
+                                _controller.dispose();
+                                if (_cameras.length > _selectedCamera + 1) {
+                                  _selectedCamera++;
+                                } else {
+                                  _selectedCamera = 0;
+                                }
+                                _controller = CameraController(_cameras[ _selectedCamera], ResolutionPreset.max);
+                                _initializeControllerFuture = _controller.initialize();
+                                setState(() {});
+                              },
+                              icon: Icon(
+                                Icons.cameraswitch,
+                                color: Colors.white,
+                                size: 32,
+                              )),
+                        ),
                       ],
                     ),
                   ),
