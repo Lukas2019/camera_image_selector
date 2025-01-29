@@ -74,7 +74,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       final imageBytes = await convertImagePathToBytes(image.path);
       setState(() {
         widget.imageController.addImage(imageBytes);
-        widget.imageController.notifyListeners();
       });
     } catch (e) {
       // If an error occurs, log the error to the console.

@@ -1,17 +1,36 @@
 # camera_image_selector
 
-A new Flutter plugin project.
+A Flutter plugin for iOS and Android for picking images from the image library, and taking new pictures with the camera.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/to/develop-plugins),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+- Pick images from the image library.
+- Take new pictures with the camera.
+- Edit Images
+- Sort Images
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Installation
+
+First, add `camera_image_selector` as a [dependency in your pubspec.yaml file](https://flutter.io/platform-plugins/).
+
+'''yaml'
+dependencies:
+  camera_image_selector: ^0.0.1
+'''
+## Usage
+
+'''dart'
+import 'package:camera_image_selector/camera_image_selector.dart';
+import 'package:camera_image_selector/image_controller.dart';
+'''
+
+'''dart'
+final ImageController _imageController = ImageController();
+'''
+
+'''dart'
+CameraImageSelector(imageController: _imageController,)
+'''
 
 ### iOS
 

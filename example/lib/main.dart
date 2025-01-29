@@ -1,9 +1,9 @@
-import 'package:camera_image_selector/image_controller.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:camera_image_selector/camera_image_selector.dart';
+import 'package:camera_image_selector/image_controller.dart';
 
 void main() {
   runApp(const MyApp());
