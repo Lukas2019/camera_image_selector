@@ -6,6 +6,11 @@ import 'ImageList.dart';
 import 'image_controller.dart';
 
 class CameraImageSelector extends StatefulWidget {
+
+  static void registerWith() {
+    // Registration logic if needed.
+  }
+
   final ImageController imageController;
 
   const CameraImageSelector({Key? key, required this.imageController})
