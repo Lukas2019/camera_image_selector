@@ -105,7 +105,7 @@ class _CameraImageSelectorState extends State<CameraImageSelector> {
                                                 children: [
                           Icon(Icons.add_a_photo, size: 120,),
                           Text(
-                            'Kein Bild ausgewählt füge ein Bild hinzu.',
+                            'Kein Bild ausgewählt.',
                           ),
                                                 ],
                                               ),
